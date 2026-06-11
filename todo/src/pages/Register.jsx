@@ -13,7 +13,7 @@ function Register() {
   const handleRegister = async () => {
     try {
       await axios.post(
-        "http://127.0.0.1:8000/api/register/",
+        "https://todolist-fullstack-8n32.onrender.com/api/register/",
         {
           username,
           email,
