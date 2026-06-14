@@ -136,3 +136,18 @@
   border-radius: 8px;
   cursor: pointer;
 }
+
+.task-card img {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.task-card a {
+  display: inline-block;
+  margin-top: 10px;
+  text-decoration: none;
+  font-weight: 600;
+}

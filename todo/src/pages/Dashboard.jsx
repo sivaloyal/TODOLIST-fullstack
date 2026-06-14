@@ -8,6 +8,8 @@ function Dashboard() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [image, setImage] = useState(null);
+  const [document, setDocument] = useState(null);
   const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
@@ -35,14 +37,30 @@ function Dashboard() {
     }
 
     try {
-      await API.post("/tasks/", {
-        title,
-        description,
-        completed: false,
+      const formData = new FormData();
+
+      formData.append("title", title);
+      formData.append("description", description);
+      formData.append("completed", false);
+
+      if (image) {
+        formData.append("image", image);
+      }
+
+      if (document) {
+        formData.append("document", document);
+      }
+
+      await API.post("/tasks/", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       setTitle("");
       setDescription("");
+      setImage(null);
+      setDocument(null);
 
       fetchTasks();
     } catch (error) {
@@ -104,9 +122,25 @@ function Dashboard() {
             type="text"
             placeholder="Task Description"
             value={description}
-            onChange={(e) =>
-              setDescription(e.target.value)
-            }
+            onChange={(e) => setDescription(e.target.value)}
+          />
+
+          <input
+            type="file"
+            accept=".pdf,.doc,.docx,image/*"
+            onChange={(e) => {
+              const file = e.target.files[0];
+
+              if (!file) return;
+
+              if (file.type.startsWith("image/")) {
+                setImage(file);
+                setDocument(null);
+              } else {
+                setDocument(file);
+                setImage(null);
+              }
+            }}
           />
 
           <button onClick={addTask}>
@@ -127,6 +161,26 @@ function Dashboard() {
               <h3>{task.title}</h3>
 
               <p>{task.description}</p>
+
+              {task.image && (
+                <img
+                  src={task.image}
+                  alt="Task"
+                  width="150"
+                />
+              )}
+
+              {task.document && (
+                <p>
+                  <a
+                    href={task.document}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    View Document
+                  </a>
+                </p>
+              )}
 
               <div className="btn-group">
                 <button
